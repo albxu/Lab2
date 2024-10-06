@@ -69,19 +69,21 @@ class ILOCOperation:
         '''
         Format the second operand
         '''
-        if register is None:
+        operand2_vr = self.operand2.vr
+        if operand2_vr is None:
             return ''
         else:
-            return f"sr{register}"
+            return f"vr{operand2_vr}"
     
     def format_op3(self, register):
         '''
         Format the third operand
         '''
-        if register is None:
+        operand3_vr = self.operand3.vr
+        if operand3_vr is None:
             return ''
         else:
-            return f"sr{register}"
+            return f"vr{register}"
         
 class Operand:
     def __init__(self, sr, vr, pr, nu):

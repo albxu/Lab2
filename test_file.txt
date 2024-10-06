@@ -1,3 +1,4 @@
 // short ILOC program that ends without a newline
 store r2 => r2
+output 15
 store r1 => r3
