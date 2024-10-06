@@ -1,6 +1,7 @@
 # Description: This file contains the parser for the ILOC language.
 import sys
-from FrontEnd import scanner, linked_list, iloc_operation
+from FrontEnd import scanner
+from FrontEnd import iloc_operation, linked_list
 
 # Global variables
 opcodes = ["load", "store", "loadI", "add", "sub", "mult", "lshift", "rshift", "output", "nop"] # list of opcodes for index mapping
