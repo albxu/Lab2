@@ -1,6 +1,6 @@
 # This file contains the renamer for the registers of the ILOC block.
 import sys
-from FrontEnd1 import parser
+from FrontEnd import parser
 
 
 def rename(file):
