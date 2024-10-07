@@ -23,11 +23,11 @@ class ILOCOperation:
     def get_uses(self):
         '''Get all the used registers'''
         if self.opcode in ['add', 'sub', 'mult', 'lshift', 'rshift']:
-            return [self.operand1, self.operand2]
+            return [self.operand2, self.operand1]
         elif self.opcode in ['load']:   
             return [self.operand1]
         elif self.opcode in ['store']:
-            return [self.operand1, self.operand3]
+            return [self.operand3, self.operand1]
         else:
             return []
         
