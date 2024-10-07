@@ -182,11 +182,12 @@ def scan_word(input_string):
                     if c == 'f':
                         c = next_char()
                         if c == 't':
-                            c == next_char()
-                            if c == ' ' or c == '\t':
-                                return (2, 7)
-                            else:
-                                return opcode_whitespace_error("rshift")
+                            return (2, 7)
+                            # c == next_char()
+                            # if c == ' ' or c == '\t':
+                            #     return (2, 7)
+                            # else:
+                            #     return opcode_whitespace_error("rshift")
                         else:
                             return not_a_word_error("rshif" + c)
                     else:
