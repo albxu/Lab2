@@ -27,7 +27,7 @@ class ILOCOperation:
         elif self.opcode in ['load']:   
             return [self.operand1]
         elif self.opcode in ['store']:
-            return [self.operand1, self.operand3]
+            return [self.operand3, self.operand1]
         else:
             return []
         
