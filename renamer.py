@@ -27,7 +27,7 @@ def rename(file):
 
     # for each operation in the block in reverse order
     current_node = ir.tail
-    while current_node.prev != ir.tail:
+    while current_node != None:
         # for each def in the operation
         def_operands = current_node.data.get_defs()
         for def_operand in def_operands:
@@ -46,7 +46,7 @@ def rename(file):
         for use_operand in use_operands:
             operand_sr = use_operand.get_sr()
             if sr_to_vr[operand_sr] is None:
-                use_operand.set_vr(vr_name)
+                sr_to_vr[operand_sr] = vr_name
                 vr_name += 1
             use_operand.set_vr(sr_to_vr[operand_sr])
             use_operand.set_nu(lu[operand_sr])
@@ -55,7 +55,8 @@ def rename(file):
             lu[use_operand.get_sr()] = index
         
         index -= 1
+        current_node = current_node.prev
 
-    ir.print_forward()
+    ir.print_forward("vr")
 
 

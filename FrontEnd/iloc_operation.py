@@ -32,14 +32,18 @@ class ILOCOperation:
             return []
         
     def print_vr(self):
-        '''Print the virtual registers'''
-        reg1 = self.format_op1()
-        reg2 = self.format_op2()
-        reg3 = self.format_op3()
-        print(f"{self.opcode}\t"
-            f"[ {reg1} ], "
-            f"[ {reg2} ], "
-            f"[ {reg3} ]")
+        '''Print the iloc block using the renamed registers'''
+        if self.opcode in ['output']:
+            print(f"{self.opcode}\t{self.operand1.sr} ")
+        elif self.opcode in ['nop']:
+            print(f"{self.opcode}")
+        elif self.opcode in ['loadI']:
+            print(f"{self.opcode}\t{self.operand1.sr} => r{self.operand3.vr}")
+        elif self.opcode in ['load', 'store']:
+            print(f"{self.opcode}\tr{self.operand1.vr} => r{self.operand3.vr}")
+        elif self.opcode in ['add', 'sub', 'mult', 'lshift', 'rshift']:
+            print(f"{self.opcode}\tr{self.operand1.vr}, r{self.operand2.vr} => r{self.operand3.vr}")
+            
 
     # def __repr__(self):
     #     # Format the operands using the format methods
@@ -53,37 +57,37 @@ class ILOCOperation:
     #             f"[ {reg2} ], "
     #             f"[ {reg3} ]")
 
-    def format_op1(self):
-        '''
-        Format the first operand
-        '''
-        operand1_vr = self.operand1.vr
-        if self.operand1.vr is None:
-            return ''
-        if self.opcode in ['loadI', 'output']:
-            return f"val {operand1_vr}"
-        else:
-            return f"vr{operand1_vr}"
+    # def format_op1(self):
+    #     '''
+    #     Format the first operand
+    #     '''
+    #     operand1_vr = self.operand1.vr
+    #     if self.operand1.vr is None:
+    #         return ''
+    #     if self.opcode in ['loadI', 'output']:
+    #         return f"val {operand1_vr}"
+    #     else:
+    #         return f"vr{operand1_vr}"
         
-    def format_op2(self, register):
-        '''
-        Format the second operand
-        '''
-        operand2_vr = self.operand2.vr
-        if operand2_vr is None:
-            return ''
-        else:
-            return f"vr{operand2_vr}"
+    # def format_op2(self, register):
+    #     '''
+    #     Format the second operand
+    #     '''
+    #     operand2_vr = self.operand2.vr
+    #     if operand2_vr is None:
+    #         return ''
+    #     else:
+    #         return f"vr{operand2_vr}"
     
-    def format_op3(self, register):
-        '''
-        Format the third operand
-        '''
-        operand3_vr = self.operand3.vr
-        if operand3_vr is None:
-            return ''
-        else:
-            return f"vr{register}"
+    # def format_op3(self, register):
+    #     '''
+    #     Format the third operand
+    #     '''
+    #     operand3_vr = self.operand3.vr
+    #     if operand3_vr is None:
+    #         return ''
+    #     else:
+    #         return f"vr{register}"
         
 class Operand:
     def __init__(self, sr, vr, pr, nu):
