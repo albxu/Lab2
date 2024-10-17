@@ -15,6 +15,9 @@ class ILOCNode:
             self.data.print_vr()
         elif mode == "sr":
             self.data.print_sr()
+    
+    def get_data(self):
+        return self.data
 
 class DoublyLinkedList:
     '''
@@ -40,6 +43,20 @@ class DoublyLinkedList:
             self.tail.next = new_node
             self.tail = new_node
             self.length += 1
+
+    def insert_before(self, data, node):
+        '''
+        Insert a new node with data before the specified node
+        '''
+        new_node = ILOCNode(data)
+        new_node.prev = node.prev
+        new_node.next = node
+        if node.prev is not None:
+            node.prev.next = new_node
+        else:
+            self.head = new_node
+        node.prev = new_node
+        self.length += 1
 
     def print_forward(self, mode: str):
         '''

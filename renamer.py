@@ -16,6 +16,8 @@ def rename(file):
     vr_name = 0
     sr_to_vr = {}
     lu = {}
+    maxlive = 0
+    currentlive = 0
     # for i ← 0 to max SR number
     # SRToVR[i] ← invalid
     # LU[i] ← ∞
@@ -41,6 +43,7 @@ def rename(file):
             def_operand.set_nu(lu[operand_sr])
             sr_to_vr[operand_sr] = None
             lu[operand_sr] = sys.maxsize
+            currentlive -= 1
 
         use_operands = current_node.data.get_uses()
         for use_operand in use_operands:
@@ -50,13 +53,14 @@ def rename(file):
                 vr_name += 1
             use_operand.set_vr(sr_to_vr[operand_sr])
             use_operand.set_nu(lu[operand_sr])
+            currentlive += 1
 
         for use_operand in use_operands:
             lu[use_operand.get_sr()] = index
-        
-        index -= 1
+        if currentlive > maxlive:
+            maxlive = currentlive
         current_node = current_node.prev
 
-    ir.print_forward("vr")
+    return ir, maxlive
 
 

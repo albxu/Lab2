@@ -13,6 +13,9 @@ class ILOCOperation:
         # Operand 3
         self.operand3 = Operand(reg3, None, None, None)
 
+    def get_line_number(self):
+        return self.line_number
+
     def get_defs(self):
         '''Get all the defined registers'''
         if self.opcode in ['load', 'loadI', 'add', 'sub', 'mult', 'lshift', 'rshift']:
@@ -43,6 +46,8 @@ class ILOCOperation:
             print(f"{self.opcode}\tr{self.operand1.vr} => r{self.operand3.vr}")
         elif self.opcode in ['add', 'sub', 'mult', 'lshift', 'rshift']:
             print(f"{self.opcode}\tr{self.operand1.vr}, r{self.operand2.vr} => r{self.operand3.vr}")
+
+    
             
 
     # def __repr__(self):
@@ -102,8 +107,21 @@ class Operand:
     def set_vr(self, vr):
         self.vr = vr
 
+    def get_vr(self):
+        return self.vr
+
     def set_nu(self, nu):
         self.nu = nu
+    
+    def get_nu(self):
+        return self.nu
+
+    def set_pr(self, pr):
+        self.pr = pr
+    
+    def get_pr(self):
+        return self.pr
+    
 
         
 

@@ -1,4 +1,3 @@
-// short ILOC program that ends without a newline
 loadI 128 => r0
 load r0 => r1
 loadI 132 => r2

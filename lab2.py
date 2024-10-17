@@ -1,5 +1,5 @@
 import sys
-import renamer
+import renamer, allocator
 
 def print_help():
     print("""
@@ -32,8 +32,20 @@ def main():
         exit(0)
 
     if flag == '-x':
-        renamer.rename(input_file)
+        ir, maxlive = renamer.rename(input_file)
+        ir.print_forward("vr")
+        print(maxlive)
         return
+    
+    try:
+        k = int(flag)
+    except:
+        print ("ERROR: Invalid number of registers '"+flag+"'. Exiting early.")
+        exit(0)
+
+    ir, maxlive = renamer.rename(input_file)
+    allocator.allocate(ir, k, maxlive)
+
     
 if __name__ == "__main__":
 
