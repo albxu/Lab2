@@ -34,7 +34,6 @@ def main():
     if flag == '-x':
         ir, maxlive = renamer.rename(input_file)
         ir.print_forward("vr")
-        print(maxlive)
         return
     
     try:
@@ -44,7 +43,8 @@ def main():
         exit(0)
 
     ir, maxlive = renamer.rename(input_file)
-    allocator.allocate(ir, k, maxlive)
+    ir = allocator.allocate(ir, k, maxlive)
+    ir.print_forward("pr")
 
     
 if __name__ == "__main__":
