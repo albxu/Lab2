@@ -30,7 +30,7 @@ class ILOCOperation:
         elif self.opcode in ['load']:   
             return [self.operand1]
         elif self.opcode in ['store']:
-            return [self.operand3, self.operand1]
+            return [self.operand1, self.operand3]
         else:
             return []
         
@@ -46,6 +46,19 @@ class ILOCOperation:
             print(f"{self.opcode}\tr{self.operand1.vr} => r{self.operand3.vr}")
         elif self.opcode in ['add', 'sub', 'mult', 'lshift', 'rshift']:
             print(f"{self.opcode}\tr{self.operand1.vr}, r{self.operand2.vr} => r{self.operand3.vr}")
+    
+    def print_pr(self):
+        '''Print the iloc block using the physical registers'''
+        if self.opcode in ['output']:
+            print(f"{self.opcode}\t{self.operand1.pr} ")
+        elif self.opcode in ['nop']:
+            print(f"{self.opcode}")
+        elif self.opcode in ['loadI']:
+            print(f"{self.opcode}\t{self.operand1.pr} => r{self.operand3.pr}")
+        elif self.opcode in ['load', 'store']:
+            print(f"{self.opcode}\tr{self.operand1.pr} => r{self.operand3.pr}")
+        elif self.opcode in ['add', 'sub', 'mult', 'lshift', 'rshift']:
+            print(f"{self.opcode}\tr{self.operand1.pr}, r{self.operand2.pr} => r{self.operand3.pr}")
 
     
             
