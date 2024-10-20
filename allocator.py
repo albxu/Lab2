@@ -76,6 +76,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 spill_insert(ir, current_node, k, pr, PR_TO_VR[pr])
             PR_TO_VR[pr] = def_operand.get_vr()
             VR_TO_PR[def_operand.get_vr()] = pr
+            #print(f'nu: {def_operand.get_nu()}')
             PR_NU[pr] = def_operand.get_nu()
             # set O.PR to z
             def_operand.set_pr(pr)

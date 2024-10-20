@@ -1,5 +1,6 @@
 import sys
 import renamer, allocator
+from FrontEnd import parser
 
 def print_help():
     print("""
@@ -24,12 +25,17 @@ def main():
     
     if argc == 3:
         f_name = sys.argv[2]
-
     try:
         input_file = open(f_name,'r')
     except:
         print ("ERROR: Could not open file '"+f_name+"'. Exiting early.")
         exit(0)
+
+    if flag == '-d':
+        print("DEBUG: Running in debug mode.")
+        ir = parser.parse(input_file, True)[0]
+        ir.print_forward("sr")
+        return
 
     if flag == '-x':
         ir, maxlive = renamer.rename(input_file)

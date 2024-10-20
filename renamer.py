@@ -54,12 +54,13 @@ def rename(file):
             use_operand.set_vr(sr_to_vr[operand_sr])
             use_operand.set_nu(lu[operand_sr])
             currentlive += 1
-            
+
         for use_operand in use_operands:
             lu[use_operand.get_sr()] = index
         if currentlive > maxlive:
             maxlive = currentlive
         current_node = current_node.prev
+        index -= 1
         #print(f'lu: {lu}')
 
     return ir, maxlive
