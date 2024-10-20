@@ -15,6 +15,8 @@ class ILOCNode:
             self.data.print_vr()
         elif mode == "sr":
             self.data.print_sr()
+        elif mode == "pr":
+            self.data.print_pr()
     
     def get_data(self):
         return self.data

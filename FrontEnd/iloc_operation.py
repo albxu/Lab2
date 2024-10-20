@@ -6,7 +6,9 @@ class ILOCOperation:
         
         # Operand 1
         self.operand1 = Operand(reg1, None, None, None)
-        
+        if opcode == "loadI" or opcode == "output":
+            self.operand1.set_pr(reg1)
+
         # Operand 2
         self.operand2 = Operand(reg2, None, None, None)  
         
