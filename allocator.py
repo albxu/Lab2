@@ -16,10 +16,8 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
     maxlive is the maximum number of live registers
     '''
     if maxlive > k:
-        spill = True
         end = k - 1
     else:
-        spill = False
         end = k
 
     for i in range(0, end):
