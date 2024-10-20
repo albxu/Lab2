@@ -95,7 +95,7 @@ def get_pr(k: int, spill: bool):
     Get a physical register
     '''
     if spill:
-        end = k + 1
+        end = k - 1
     else:
         end = k
     for i in range(0, end):
