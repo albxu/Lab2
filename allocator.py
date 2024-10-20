@@ -20,7 +20,12 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
     else:
         spill = False
 
-    for i in range(0, k):
+    if spill:
+        end = k - 1
+    else:
+        end = k
+
+    for i in range(0, end):
         PR_NU[i] = sys.maxsize
 
     # for each OP in the block, top to bottom
