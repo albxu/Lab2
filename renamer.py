@@ -25,7 +25,8 @@ def rename(file):
     for i in range(0, max_sr + 1):
         sr_to_vr[i] = None
         lu[i] = sys.maxsize
-    index = num_operations
+    index = num_operations - 1
+    #print(f'lu: {lu}')
 
     # for each operation in the block in reverse order
     current_node = ir.tail
@@ -39,7 +40,6 @@ def rename(file):
                 sr_to_vr[operand_sr] = vr_name
                 vr_name += 1
             def_operand.set_vr(sr_to_vr[operand_sr])
-
             def_operand.set_nu(lu[operand_sr])
             sr_to_vr[operand_sr] = None
             lu[operand_sr] = sys.maxsize
@@ -54,12 +54,13 @@ def rename(file):
             use_operand.set_vr(sr_to_vr[operand_sr])
             use_operand.set_nu(lu[operand_sr])
             currentlive += 1
-
+            
         for use_operand in use_operands:
             lu[use_operand.get_sr()] = index
         if currentlive > maxlive:
             maxlive = currentlive
         current_node = current_node.prev
+        #print(f'lu: {lu}')
 
     return ir, maxlive
 

@@ -27,15 +27,23 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
     current_node = ir.head
     index = 0
     while current_node != None:
-        print(f'current index: {index}')
+        #print(f'current index: {index}')
         # for each use O in OP
         use_operands = current_node.data.get_uses()
         for use_operand in use_operands:
             # if (O.VR has no PR) then
+            #print(use_operand.get_vr())
             if VR_TO_PR.get(use_operand.get_vr()) is None:
-                print("USE HERE")
+                pr, spilled = get_pr(k, spill)
+                if VR_TO_SPILL.get(use_operand.get_vr()) is not None:
+                    #print("RESTORED")
+                    # Restore the register
+                    restore_insert(k, ir, current_node, pr, use_operand.get_vr())
+                    VR_TO_SPILL[use_operand.get_vr()] = None
                 # get a PR, say x
-                pr = get_pr(k, spill)
+                if spilled:
+                    # Spill the register
+                    spill_insert(ir, current_node, k, pr, PR_TO_VR[pr])
                 # load O.VR into x
                 PR_TO_VR[pr] = use_operand.get_vr()
                 VR_TO_PR[use_operand.get_vr()] = pr
@@ -57,21 +65,27 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
         # for each def O in OP
         def_operands = current_node.data.get_defs()
         for def_operand in def_operands:
-            print("DEF HERE")
+            if VR_TO_SPILL.get(def_operand.get_vr()) is not None:
+                # Restore the register
+                restore_insert(k, ir, current_node, VR_TO_SPILL[def_operand.get_vr()], def_operand.get_vr())
+                VR_TO_SPILL[def_operand.get_vr()] = None
             # get a PR, say z
-            pr = get_pr(k, spill)
+            pr, spilled = get_pr(k, spill)
+            if spilled:
+                # Spill the register
+                spill_insert(ir, current_node, k, pr, PR_TO_VR[pr])
             PR_TO_VR[pr] = def_operand.get_vr()
             VR_TO_PR[def_operand.get_vr()] = pr
             PR_NU[pr] = def_operand.get_nu()
             # set O.PR to z
             def_operand.set_pr(pr)
 
-
-        
         current_node = current_node.next
         index += 1
-        print(f'PR_TO_VR: {PR_TO_VR}')
-        print(f'VR_TO_PR: {VR_TO_PR}')
+        # print(f'PR_TO_VR: {PR_TO_VR}')
+        # print(f'VR_TO_PR: {VR_TO_PR}')
+        # print(f'PR_NU: {PR_NU}')
+        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
 
     return ir
 
@@ -85,20 +99,22 @@ def get_pr(k: int, spill: bool):
         end = k
     for i in range(0, end):
         if PR_TO_VR.get(i) is None:
-            return i
+            return i, False
         
     # Find the register with the furthest nu
     pr_with_max_nu = 0
     for i in range(0, end):
         if PR_NU[i] > PR_NU[pr_with_max_nu]:
             pr_with_max_nu = i
+    spilled = True
 
-    return pr_with_max_nu
+    return pr_with_max_nu, spilled
 
 def spill_insert(ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNode, reserved_register: int, pr_to_spill: int, vr_to_spill: int):
     '''
     Insert the store and loadI operations for spilling
     '''
+    global NEXT_SPILL_LOCATION
     VR_TO_SPILL[vr_to_spill] = NEXT_SPILL_LOCATION
     # Create a loadI operation
     spill_load = iloc_operation.ILOCOperation(operation.get_data().get_line_number(), "loadI", reg1 = None, reg2=None, reg3=None)
@@ -117,30 +133,29 @@ def spill_insert(ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNo
     # Insert the store operation before the current operation
     ir.insert_before(spill_loadI, operation)
 
+    VR_TO_PR[vr_to_spill] = None
     # Update the next spill location
     NEXT_SPILL_LOCATION += 4
 
-def restore_insert(k, ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNode, reserved_register: int, vr_to_restore: int):
+def restore_insert(k, ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNode, allocated_pr: int, vr_to_restore: int):
     '''
     Insert the load and loadI operations for restoring
     '''
-
-    pr = get_pr(k, False)
 
     # Create a loadI operation
     restore_load = iloc_operation.ILOCOperation(operation.get_data().get_line_number(), "loadI", reg1 = None, reg2=None, reg3=None)
     spilled_location = VR_TO_SPILL[vr_to_restore]
     restore_load.operand1.set_vr(spilled_location)
     restore_load.operand1.set_pr(spilled_location)
-    restore_load.operand3.set_pr(reserved_register)
+    restore_load.operand3.set_pr(k)
 
     # Insert the loadI operation before the current operation
     ir.insert_before(restore_load, operation)
 
     # Create a load operation
     restore_loadI = iloc_operation.ILOCOperation(operation.get_data().get_line_number(), "load", reg1 = None, reg2=None, reg3=None)
-    restore_loadI.operand1.set_pr(reserved_register)
-    restore_loadI.operand3.set_pr(k)
+    restore_loadI.operand1.set_pr(k)
+    restore_loadI.operand3.set_pr(allocated_pr)
 
     # Insert the load operation before the current operation
     ir.insert_before(restore_loadI, operation)
