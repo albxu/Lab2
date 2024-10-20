@@ -36,7 +36,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
             # if (O.VR has no PR) then
             #print(use_operand.get_vr())
             if VR_TO_PR.get(use_operand.get_vr()) is None:
-                pr, spilled = get_pr(k, spill)
+                pr, spilled = get_pr(end)
                 if VR_TO_SPILL.get(use_operand.get_vr()) is not None:
                     #print("RESTORED")
                     # Restore the register
@@ -67,7 +67,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
         # for each def O in OP
         def_operands = current_node.data.get_defs()
         for def_operand in def_operands:
-            pr, spilled = get_pr(k, spill)
+            pr, spilled = get_pr(end)
             if VR_TO_SPILL.get(def_operand.get_vr()) is not None:
                 # Restore the register
                 restore_insert(end, ir, current_node, pr, def_operand.get_vr())
@@ -92,14 +92,10 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
 
     return ir
 
-def get_pr(k: int, spill: bool):
+def get_pr(end: int):
     '''
     Get a physical register
     '''
-    if spill:
-        end = k - 1
-    else:
-        end = k
     for i in range(0, end):
         if PR_TO_VR.get(i) is None:
             return i, False
