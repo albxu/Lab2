@@ -85,10 +85,10 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
 
         current_node = current_node.next
         index += 1
-        print(f'PR_TO_VR: {PR_TO_VR}')
-        print(f'VR_TO_PR: {VR_TO_PR}')
-        print(f'PR_NU: {PR_NU}')
-        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        # print(f'PR_TO_VR: {PR_TO_VR}')
+        # print(f'VR_TO_PR: {VR_TO_PR}')
+        # print(f'PR_NU: {PR_NU}')
+        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
 
     return ir
 
