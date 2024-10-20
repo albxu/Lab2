@@ -67,12 +67,12 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
         # for each def O in OP
         def_operands = current_node.data.get_defs()
         for def_operand in def_operands:
+            pr, spilled = get_pr(k, spill)
             if VR_TO_SPILL.get(def_operand.get_vr()) is not None:
                 # Restore the register
-                restore_insert(end, ir, current_node, VR_TO_SPILL[def_operand.get_vr()], def_operand.get_vr())
+                restore_insert(end, ir, current_node, pr, def_operand.get_vr())
                 VR_TO_SPILL[def_operand.get_vr()] = None
             # get a PR, say z
-            pr, spilled = get_pr(k, spill)
             if spilled:
                 # Spill the register
                 spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
