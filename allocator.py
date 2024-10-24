@@ -27,13 +27,13 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 # get a PR, say x
                 pr, spilled = get_pr(end)
                 # check if the register is spilled
+                if spilled:
+                    # Spill a register
+                    spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                 if VR_TO_SPILL.get(use_operand.get_vr()) is not None:
                     # Restore the register
                     restore_insert(end, ir, current_node, pr, use_operand.get_vr())
                     VR_TO_SPILL[use_operand.get_vr()] = None
-                if spilled:
-                    # Spill a register
-                    spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
 
                 #load O.VR into x
                 PR_TO_VR[pr] = use_operand.get_vr()
@@ -66,11 +66,11 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
 
         current_node = current_node.next
         index += 1
-        print(f"-------------------- AFTER ITERATION {index} --------------------")
-        print(f'PR_TO_VR: {PR_TO_VR}')
-        print(f'VR_TO_PR: {VR_TO_PR}')
-        print(f'PR_NU: {PR_NU}')
-        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        # print(f"-------------------- AFTER ITERATION {index} --------------------")
+        # print(f'PR_TO_VR: {PR_TO_VR}')
+        # print(f'VR_TO_PR: {VR_TO_PR}')
+        # print(f'PR_NU: {PR_NU}')
+        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
 
     return ir
 
