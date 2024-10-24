@@ -7,7 +7,8 @@ VR_TO_PR = {}
 PR_TO_VR = {}
 VR_TO_SPILL = {}
 PR_NU = {}
-NEXT_SPILL_LOCATION = 32768
+# NEXT_SPILL_LOCATION = 32768
+NEXT_SPILL_LOCATION = 65536
 
 def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
     if maxlive > k:
@@ -65,11 +66,11 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
 
         current_node = current_node.next
         index += 1
-        # print(f"-------------------- AFTER ITERATION {index} --------------------")
-        # print(f'PR_TO_VR: {PR_TO_VR}')
-        # print(f'VR_TO_PR: {VR_TO_PR}')
-        # print(f'PR_NU: {PR_NU}')
-        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        print(f"-------------------- AFTER ITERATION {index} --------------------")
+        print(f'PR_TO_VR: {PR_TO_VR}')
+        print(f'VR_TO_PR: {VR_TO_PR}')
+        print(f'PR_NU: {PR_NU}')
+        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
 
     return ir
 
