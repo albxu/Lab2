@@ -27,7 +27,8 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
     current_node = ir.head
     index = 0
     while current_node != None:
-        #print(f'current index: {index}')
+        last_freed_pr = None
+        print(f'current index: {index}')
         # for each use O in OP
         use_operands = current_node.data.get_uses()
         for use_operand in use_operands:
@@ -60,12 +61,19 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 pr_to_free = VR_TO_PR[use_operand.get_vr()]
                 PR_TO_VR[pr_to_free] = None
                 VR_TO_PR[use_operand.get_vr()] = None
+                last_freed_pr = pr_to_free
             else:
                 PR_NU[use_operand.get_pr()] = use_operand.get_nu()
         # for each def O in OP
         def_operands = current_node.data.get_defs()
         for def_operand in def_operands:
-            pr, spilled = get_pr(end)
+            if last_freed_pr is not None:
+                pr = last_freed_pr
+                last_freed_pr = None
+            else:
+                pr, spilled = get_pr(end)
+            print(PR_TO_VR)
+            print(pr)
             if VR_TO_SPILL.get(def_operand.get_vr()) is not None:
                 # Restore the register
                 restore_insert(end, ir, current_node, pr, def_operand.get_vr())
@@ -83,10 +91,11 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
 
         current_node = current_node.next
         index += 1
-        # print(f'PR_TO_VR: {PR_TO_VR}')
-        # print(f'VR_TO_PR: {VR_TO_PR}')
-        # print(f'PR_NU: {PR_NU}')
-        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        print(f'PR_TO_VR: {PR_TO_VR}')
+        print(f'VR_TO_PR: {VR_TO_PR}')
+        print(f'PR_NU: {PR_NU}')
+        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+
 
     return ir
 
@@ -156,10 +165,6 @@ def restore_insert(end, ir: linked_list.DoublyLinkedList, operation: linked_list
 
     # Insert the load operation before the current operation
     ir.insert_before(restore_loadI, operation)
-
-
-
-
 
 
 
