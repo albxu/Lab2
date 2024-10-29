@@ -228,14 +228,14 @@ def restore_insert(reserved_register, ir: linked_list.DoublyLinkedList, operatio
     spilled_location = VR_TO_SPILL[vr_to_restore]
     restore_loadI.operand1.set_vr(spilled_location)
     restore_loadI.operand1.set_pr(spilled_location)
-    restore_loadI.operand3.set_pr(reserved_register)
+    restore_loadI.operand3.set_pr(allocated_pr)
 
     # Insert the loadI operation before the current operation
     ir.insert_before(restore_loadI, operation)
 
     # Create a load operation
     restore_load = iloc_operation.ILOCOperation(operation.get_data().get_line_number(), "load", reg1 = None, reg2=None, reg3=None)
-    restore_load.operand1.set_pr(reserved_register)
+    restore_load.operand1.set_pr(allocated_pr)
     restore_load.operand3.set_pr(allocated_pr)
 
     # Insert the load operation before the current operation
