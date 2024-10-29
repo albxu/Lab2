@@ -22,10 +22,12 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
     index = 0
     while current_node != None:
         use_operands = current_node.data.get_uses()
+        used_prs = []
         for use_operand in use_operands:
             if VR_TO_PR.get(use_operand.get_vr()) is None:
                 # get a PR, say x
-                pr, spilled = get_pr(end)
+                pr, spilled = get_pr(end, used_prs)
+                used_prs.append(pr)
                 # check if the register is spilled
                 if spilled:
                     # Spill a register
@@ -44,7 +46,13 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
             else:
                 # set O.PR to O.VR's PR
                 use_operand.set_pr(VR_TO_PR[use_operand.get_vr()])
-        
+
+            print(f"-------------------- AFTER USES IN ITERATION {index} --------------------")
+            print(f'PR_TO_VR: {PR_TO_VR}')
+            print(f'VR_TO_PR: {VR_TO_PR}')
+            print(f'PR_NU: {PR_NU}')
+            print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        used_prs = []
         for use_operand in use_operands:
             #if O is last use of O.VR, free its PR
             if use_operand.get_nu() == sys.maxsize:
@@ -56,7 +64,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
 
         for def_operand in current_node.data.get_defs():
             # get a PR, say z
-            pr, spilled = get_pr(end)
+            pr, spilled = get_pr(end, used_prs)
             if spilled:
                 # Spill the register
                 spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
@@ -66,27 +74,28 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
             PR_NU[pr] = def_operand.get_nu()
             def_operand.set_pr(pr)
 
-        # print(f"-------------------- AFTER ITERATION {index} --------------------")
-        # print(f'PR_TO_VR: {PR_TO_VR}')
-        # print(f'VR_TO_PR: {VR_TO_PR}')
-        # print(f'PR_NU: {PR_NU}')
-        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
-        # check_maps(index)
+        print(f"-------------------- AFTER ITERATION {index} --------------------")
+        current_node.data.print_pr()
+        print(f'PR_TO_VR: {PR_TO_VR}')
+        print(f'VR_TO_PR: {VR_TO_PR}')
+        print(f'PR_NU: {PR_NU}')
+        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        check_maps(index)
 
         current_node = current_node.next
         index += 1
 
     return ir
 
-def get_pr(end):
+def get_pr(end, used_prs):
     for i in range(0, end):
-        if PR_TO_VR.get(i) is None:
+        if PR_TO_VR.get(i) is None and i not in used_prs:
             return i, False
         
     # no open registers
     pr_with_max_nu = 0
     for i in range(0, end):
-        if PR_TO_VR.get(i) is not None:
+        if PR_TO_VR.get(i) is not None and i not in used_prs:
             if PR_NU[i] > PR_NU[pr_with_max_nu]:
                 pr_with_max_nu = i
         else:
