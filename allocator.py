@@ -47,11 +47,11 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 # set O.PR to O.VR's PR
                 use_operand.set_pr(VR_TO_PR[use_operand.get_vr()])
 
-            print(f"-------------------- AFTER USES IN ITERATION {index} --------------------")
-            print(f'PR_TO_VR: {PR_TO_VR}')
-            print(f'VR_TO_PR: {VR_TO_PR}')
-            print(f'PR_NU: {PR_NU}')
-            print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+            # print(f"-------------------- AFTER USES IN ITERATION {index} --------------------")
+            # print(f'PR_TO_VR: {PR_TO_VR}')
+            # print(f'VR_TO_PR: {VR_TO_PR}')
+            # print(f'PR_NU: {PR_NU}')
+            # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
         used_prs = []
         for use_operand in use_operands:
             #if O is last use of O.VR, free its PR
@@ -74,13 +74,13 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
             PR_NU[pr] = def_operand.get_nu()
             def_operand.set_pr(pr)
 
-        print(f"-------------------- AFTER ITERATION {index} --------------------")
-        current_node.data.print_pr()
-        print(f'PR_TO_VR: {PR_TO_VR}')
-        print(f'VR_TO_PR: {VR_TO_PR}')
-        print(f'PR_NU: {PR_NU}')
-        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
-        check_maps(index)
+        # print(f"-------------------- AFTER ITERATION {index} --------------------")
+        # current_node.data.print_pr()
+        # print(f'PR_TO_VR: {PR_TO_VR}')
+        # print(f'VR_TO_PR: {VR_TO_PR}')
+        # print(f'PR_NU: {PR_NU}')
+        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        # check_maps(index)
 
         current_node = current_node.next
         index += 1
