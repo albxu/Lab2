@@ -25,12 +25,3 @@ add    r12, r13 => r21
 add    r14, r15 => r22
 add    r16, r17 => r23
 add    r18, r19 => r24
-//           
-add    r20, r21 => r20
-add    r22, r23 => r21
-add    r20, r24 => r20
-add    r20, r21 => r20
-//           
-loadI  0   => r0
-store  r20 => r0
-output 0 
