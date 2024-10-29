@@ -51,6 +51,8 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 PR_TO_VR[use_operand.get_pr()] = None
                 VR_TO_PR[use_operand.get_vr()] = None
                 PR_NU[use_operand.get_pr()] = sys.maxsize
+            else:
+                PR_NU[use_operand.get_pr()] = use_operand.get_nu()
 
         for def_operand in current_node.data.get_defs():
             # get a PR, say z
@@ -64,13 +66,15 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
             PR_NU[pr] = def_operand.get_nu()
             def_operand.set_pr(pr)
 
+        print(f"-------------------- AFTER ITERATION {index} --------------------")
+        print(f'PR_TO_VR: {PR_TO_VR}')
+        print(f'VR_TO_PR: {VR_TO_PR}')
+        print(f'PR_NU: {PR_NU}')
+        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        check_maps(index)
+
         current_node = current_node.next
         index += 1
-        # print(f"-------------------- AFTER ITERATION {index} --------------------")
-        # print(f'PR_TO_VR: {PR_TO_VR}')
-        # print(f'VR_TO_PR: {VR_TO_PR}')
-        # print(f'PR_NU: {PR_NU}')
-        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
 
     return ir
 
@@ -242,6 +246,24 @@ def restore_insert(reserved_register, ir: linked_list.DoublyLinkedList, operatio
     ir.insert_before(restore_load, operation)
 
 
-
-
+def check_maps(x):
+    #For each PR p, VR-to-PR[ PR-to-VR[ p ] ] = p
+    for i in range(0, len(PR_TO_VR)):
+        if PR_TO_VR.get(i) is not None:
+            if VR_TO_PR.get(PR_TO_VR[i]) != i:
+                print(f"ERROR: VR_TO_PR[PR_TO_VR[{i}]] != {i}")
+                return False
+    #For each VR v, if VR-to-PR[ v ] is defined, PR-to-VR[ VR-to-PR[ v ] ] = v
+    for i in range(0, len(VR_TO_PR)):
+        if VR_TO_PR.get(i) is not None:
+            if PR_TO_VR.get(VR_TO_PR[i]) != i:
+                print(f"ERROR: PR_TO_VR[VR_TO_PR[{i}]] != {i}")
+                return False
+    #At operation x, for each PR p, NextUse[ p ] > x
+    for i in range(0, len(PR_NU)):
+        if PR_NU.get(i) is not None:
+            if PR_NU[i] <= x:
+                print(f"ERROR: NextUse[{i}] <= {x}")
+                return False
+    return True
     
