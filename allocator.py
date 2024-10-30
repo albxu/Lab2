@@ -35,7 +35,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                     if rematerializable.get(PR_TO_VR[pr]) is None:
                         spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                     else:
-                        VR_TO_SPILL[use_operand.get_vr()] = NEXT_SPILL_LOCATION
+                        VR_TO_SPILL[PR_TO_VR[pr]] = NEXT_SPILL_LOCATION
                 if VR_TO_SPILL.get(use_operand.get_vr()) is not None:
                     # Restore the register
                     restore_insert(end, ir, current_node, pr, use_operand.get_vr(), rematerializable)
@@ -76,7 +76,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 if rematerializable.get(PR_TO_VR[pr]) is None:
                     spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                 else:
-                    VR_TO_SPILL[def_operand.get_vr()] = NEXT_SPILL_LOCATION
+                    VR_TO_SPILL[PR_TO_VR[pr]] = NEXT_SPILL_LOCATION
             # set O.PR to z
             PR_TO_VR[pr] = def_operand.get_vr()
             VR_TO_PR[def_operand.get_vr()] = pr
