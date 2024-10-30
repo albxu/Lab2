@@ -52,15 +52,15 @@ class ILOCOperation:
     def print_pr(self):
         '''Print the iloc block using the physical registers'''
         if self.opcode in ['output']:
-            print(f"{self.opcode}\t{self.operand1.pr} ")
+            print(f"{self.opcode}\t{self.operand1.pr}")
         elif self.opcode in ['nop']:
             print(f"{self.opcode}")
         elif self.opcode in ['loadI']:
             print(f"{self.opcode}\t{self.operand1.pr} => r{self.operand3.pr}")
         elif self.opcode in ['load', 'store']:
-            print(f"{self.opcode}\tr{self.operand1.pr} => r{self.operand3.pr}")
+            print(f"{self.opcode}\tr{self.operand1.pr} => r{self.operand3.pr}")#\t\tvr{self.operand1.vr} => vr{self.operand3.vr}")
         elif self.opcode in ['add', 'sub', 'mult', 'lshift', 'rshift']:
-            print(f"{self.opcode}\tr{self.operand1.pr}, r{self.operand2.pr} => r{self.operand3.pr}")
+            print(f"{self.opcode}\tr{self.operand1.pr}, r{self.operand2.pr} => r{self.operand3.pr}")#\t\tvr{self.operand1.vr}, vr{self.operand2.vr} => vr{self.operand3.vr}")
 
     def print_sr(self):
         '''Print the iloc block using the source registers'''

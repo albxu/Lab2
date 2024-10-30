@@ -6,8 +6,8 @@ def print_help():
     print("""
         Valid command-line arguments:
         -h                : Show this help message.
-        -x <name>         : scan and parse then input block, and then rename registers printing results to stdout
-        k <name>          : k is the number of registers available, name is the name of file with the input block
+        -x <name>         : scan and parse the input block, and then rename registers printing results to stdout
+        k <name>          : k is the number of registers available, name is the name of file with the input block, allocate physical registers and print results to stdout
             """)
 
 def main():
@@ -31,15 +31,10 @@ def main():
         print ("ERROR: Could not open file '"+f_name+"'. Exiting early.")
         exit(0)
 
-    if flag == '-d':
-        print("DEBUG: Running in debug mode.")
-        ir = parser.parse(input_file, True)[0]
-        ir.print_forward("sr")
-        return
-
     if flag == '-x':
         ir, maxlive = renamer.rename(input_file)
         ir.print_forward("vr")
+        print("Maxlive: ", maxlive)
         return
     
     try:
@@ -50,7 +45,9 @@ def main():
 
     ir, maxlive = renamer.rename(input_file)
     ir = allocator.allocate(ir, k, maxlive)
+    print('maxlive: ', maxlive)
     ir.print_forward("pr")
+    return
 
     
 if __name__ == "__main__":
