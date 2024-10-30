@@ -16,7 +16,8 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
         end = k - 1
     else:
         end = k
-
+    # maps vrs to loadIs for rematerialization
+    rematerializable = {}
     # for each OP in the block, top to bottom
     current_node = ir.head
     index = 0
@@ -30,11 +31,14 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 used_prs.append(pr)
                 # check if the register is spilled
                 if spilled:
-                    # Spill a register
-                    spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
+                    # Spill a register if it can't be rematerialized
+                    if rematerializable.get(pr) is None:
+                        spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
+                    else:
+                        VR_TO_SPILL[use_operand.get_vr()] = NEXT_SPILL_LOCATION
                 if VR_TO_SPILL.get(use_operand.get_vr()) is not None:
                     # Restore the register
-                    restore_insert(end, ir, current_node, pr, use_operand.get_vr())
+                    restore_insert(end, ir, current_node, pr, use_operand.get_vr(), rematerializable)
                     VR_TO_SPILL[use_operand.get_vr()] = None
 
                 #load O.VR into x
@@ -63,11 +67,16 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 PR_NU[use_operand.get_pr()] = use_operand.get_nu()
 
         for def_operand in current_node.data.get_defs():
+            if current_node.data.get_opcode() == "loadI":
+                rematerializable[def_operand.get_vr()] = current_node.data.get_operand1().get_pr()
             # get a PR, say z
             pr, spilled = get_pr(end, used_prs)
             if spilled:
-                # Spill the register
-                spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
+                # Spill a register if it can't be rematerialized
+                if rematerializable.get(pr) is None:
+                    spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
+                else:
+                    VR_TO_SPILL[use_operand.get_vr()] = NEXT_SPILL_LOCATION
             # set O.PR to z
             PR_TO_VR[pr] = def_operand.get_vr()
             VR_TO_PR[def_operand.get_vr()] = pr
@@ -129,10 +138,19 @@ def spill_insert(ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNo
     # Update the next spill location
     NEXT_SPILL_LOCATION += 4
 
-def restore_insert(reserved_register, ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNode, allocated_pr: int, vr_to_restore: int):
+def restore_insert(reserved_register, ir: linked_list.DoublyLinkedList, operation: linked_list.ILOCNode, allocated_pr: int, vr_to_restore: int, rematerializable: dict):
     '''
     Insert the load and loadI operations for restoring
     '''
+    if rematerializable.get(vr_to_restore) is not None:
+        # Create a loadI operation
+        restore_loadI = iloc_operation.ILOCOperation(operation.get_data().get_line_number(), "loadI", reg1 = None, reg2=None, reg3=None)
+        restore_loadI.operand1.set_pr(rematerializable[vr_to_restore])
+        restore_loadI.operand3.set_pr(allocated_pr)
+
+        # Insert the loadI operation before the current operation
+        ir.insert_before(restore_loadI, operation)
+        return
 
     # Create a loadI operation
     restore_loadI = iloc_operation.ILOCOperation(operation.get_data().get_line_number(), "loadI", reg1 = None, reg2=None, reg3=None)

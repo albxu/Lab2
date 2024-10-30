@@ -45,7 +45,6 @@ def main():
 
     ir, maxlive = renamer.rename(input_file)
     ir = allocator.allocate(ir, k, maxlive)
-    print('maxlive: ', maxlive)
     ir.print_forward("pr")
     return
 

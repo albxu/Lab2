@@ -17,6 +17,12 @@ class ILOCOperation:
 
     def get_line_number(self):
         return self.line_number
+    
+    def get_opcode(self):
+        return self.opcode
+    
+    def get_operand1(self):
+        return self.operand1
 
     def get_defs(self):
         '''Get all the defined registers'''
