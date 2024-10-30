@@ -36,6 +36,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                         spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                     else:
                         VR_TO_SPILL[PR_TO_VR[pr]] = NEXT_SPILL_LOCATION
+                        VR_TO_PR[PR_TO_VR[pr]] = None
                 if VR_TO_SPILL.get(use_operand.get_vr()) is not None:
                     # Restore the register
                     restore_insert(end, ir, current_node, pr, use_operand.get_vr(), rematerializable)
@@ -77,19 +78,20 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                     spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                 else:
                     VR_TO_SPILL[PR_TO_VR[pr]] = NEXT_SPILL_LOCATION
+                    VR_TO_PR[PR_TO_VR[pr]] = None
             # set O.PR to z
             PR_TO_VR[pr] = def_operand.get_vr()
             VR_TO_PR[def_operand.get_vr()] = pr
             PR_NU[pr] = def_operand.get_nu()
             def_operand.set_pr(pr)
 
-        # print(f"-------------------- AFTER ITERATION {index} --------------------")
-        # current_node.data.print_pr()
-        # print(f'PR_TO_VR: {PR_TO_VR}')
-        # print(f'VR_TO_PR: {VR_TO_PR}')
-        # print(f'PR_NU: {PR_NU}')
-        # print(f'VR_TO_SPILL: {VR_TO_SPILL}')
-        # check_maps(index)
+        print(f"-------------------- AFTER ITERATION {index} --------------------")
+        current_node.data.print_pr()
+        print(f'PR_TO_VR: {PR_TO_VR}')
+        print(f'VR_TO_PR: {VR_TO_PR}')
+        print(f'PR_NU: {PR_NU}')
+        print(f'VR_TO_SPILL: {VR_TO_SPILL}')
+        check_maps(index)
 
         current_node = current_node.next
         index += 1
