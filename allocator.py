@@ -32,7 +32,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
                 # check if the register is spilled
                 if spilled:
                     # Spill a register if it can't be rematerialized
-                    if rematerializable.get(pr) is None:
+                    if rematerializable.get(use_operand.get_vr()) is None:
                         spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                     else:
                         VR_TO_SPILL[use_operand.get_vr()] = NEXT_SPILL_LOCATION
@@ -73,7 +73,7 @@ def allocate(ir: linked_list.DoublyLinkedList, k: int, maxlive: int):
             pr, spilled = get_pr(end, used_prs)
             if spilled:
                 # Spill a register if it can't be rematerialized
-                if rematerializable.get(pr) is None:
+                if rematerializable.get(use_operand.get_vr()) is None:
                     spill_insert(ir, current_node, end, pr, PR_TO_VR[pr])
                 else:
                     VR_TO_SPILL[use_operand.get_vr()] = NEXT_SPILL_LOCATION
